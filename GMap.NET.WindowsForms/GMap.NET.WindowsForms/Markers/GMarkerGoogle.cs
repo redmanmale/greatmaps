@@ -69,7 +69,18 @@ namespace GMap.NET.WindowsForms.Markers
       static Bitmap shadow_small;
       static Bitmap pushpin_shadow;
 
-      public readonly GMarkerGoogleType Type;
+      private GMarkerGoogleType _type;
+
+      public GMarkerGoogleType Type
+      {
+          get { return _type; }
+          set
+          {
+              _type = value;
+              if (_type != GMarkerGoogleType.none)
+                  LoadBitmap();
+          }
+      }
 
       public GMarkerGoogle(PointLatLng p, GMarkerGoogleType type)
          : base(p)
