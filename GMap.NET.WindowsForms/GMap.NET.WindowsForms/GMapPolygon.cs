@@ -71,6 +71,8 @@ namespace GMap.NET.WindowsForms
 
       private bool isMouseOver = false;
 
+      private readonly bool _isTrack;
+
       /// <summary>
       /// is mouse over
       /// </summary>
@@ -136,11 +138,11 @@ namespace GMap.NET.WindowsForms
                   pnts[pnts.Length - 1 - i] = p2;
               }
 
-              if (pnts.Length > 2)
+              if (pnts.Length > 2 && !_isTrack)
               {
                   graphicsPath.AddPolygon(pnts);
               }
-              else if (pnts.Length == 2)
+              else if (pnts.Length == 2 || _isTrack)
               {
                   graphicsPath.AddLines(pnts);
               }
@@ -226,10 +228,11 @@ namespace GMap.NET.WindowsForms
           DefaultStroke.Width = 5;
       }
 
-      public GMapPolygon(List<PointLatLng> points, string name)
+      public GMapPolygon(List<PointLatLng> points, string name, bool isTrack = false)
          : base(points, name)
       {
          LocalPoints.Capacity = Points.Count;
+          _isTrack = isTrack;
       }
 
       /// <summary>
