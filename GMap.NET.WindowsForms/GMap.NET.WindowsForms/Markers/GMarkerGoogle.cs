@@ -68,26 +68,24 @@ namespace GMap.NET.WindowsForms.Markers
       static Bitmap msmarker_shadow;
       static Bitmap shadow_small;
       static Bitmap pushpin_shadow;
+      private readonly bool ShowShadow;
+      private readonly GMarkerGoogleType Type;
 
-      private readonly bool _showShadow;
-      private GMarkerGoogleType _type;
+       public Bitmap BitmapAccessor
+       {
+           get { return Bitmap; }
+           set
+           {
+               Bitmap = value;
+               Size = new Size(Bitmap.Width, Bitmap.Height);
+           }
+       }
 
-      public GMarkerGoogleType Type
-      {
-          get { return _type; }
-          set
-          {
-              _type = value;
-              if (_type != GMarkerGoogleType.none)
-                  LoadBitmap();
-          }
-      }
-
-      public GMarkerGoogle(PointLatLng p, GMarkerGoogleType type, bool showShadow = true)
+       public GMarkerGoogle(PointLatLng p, GMarkerGoogleType type, bool showShadow = true)
          : base(p)
       {
          this.Type = type;
-         this._showShadow = showShadow;
+         this.ShowShadow = showShadow;
 
          if(type != GMarkerGoogleType.none)
          {
@@ -193,7 +191,7 @@ namespace GMap.NET.WindowsForms.Markers
             }
             break;
          }
-         if (!_showShadow)
+         if (!ShowShadow)
             BitmapShadow = null;
       }
 
@@ -202,10 +200,11 @@ namespace GMap.NET.WindowsForms.Markers
       /// </summary>
       /// <param name="p"></param>
       /// <param name="Bitmap"></param>
-      public GMarkerGoogle(PointLatLng p, Bitmap Bitmap)
+      public GMarkerGoogle(PointLatLng p, Bitmap Bitmap, bool showShadow = true)
          : base(p)
       {
          this.Bitmap = Bitmap;
+         this.ShowShadow = showShadow;
          Size = new System.Drawing.Size(Bitmap.Width, Bitmap.Height);
          Offset = new Point(-Size.Width / 2, -Size.Height);
       }
@@ -223,23 +222,24 @@ namespace GMap.NET.WindowsForms.Markers
          return ret;
       }
 
-
       public override void OnRender(Graphics g)
       {
 #if !PocketPC
             if(BitmapShadow != null)
             {
                g.DrawImage(BitmapShadow, LocalPosition.X, LocalPosition.Y, BitmapShadow.Width, BitmapShadow.Height);
-            }                
-            g.DrawImage(Bitmap, LocalPosition.X, LocalPosition.Y, Size.Width, Size.Height);
-
+            }
+            if (Bitmap != null)
+            {
+                g.DrawImage(Bitmap, LocalPosition.X, LocalPosition.Y, Size.Width, Size.Height);
+            }
             //g.DrawString(LocalPosition.ToString(), SystemFonts.DefaultFont, Brushes.Red, LocalPosition);
 #else
          if(BitmapShadow != null)
          {
             DrawImageUnscaled(g, BitmapShadow, LocalPosition.X, LocalPosition.Y);
          }
-         DrawImageUnscaled(g, Bitmap, LocalPosition.X, LocalPosition.Y);
+         DrawImageUnscaled(g, bitmap, LocalPosition.X, LocalPosition.Y);
 #endif
       }
 
