@@ -539,9 +539,13 @@ namespace GMap.NET.MapProviders
       string MakeTileImageUrl(GPoint pos, int zoom, string language)
       {
          char letter = ServerLetters[GetServerNum(pos, 3)];
-         return string.Format(UrlFormat, letter, zoom, pos.X, pos.Y);
+         if (!string.IsNullOrEmpty(ServerUrl))
+              return string.Format("{3}/{0}/{1}/{2}.png", zoom, pos.X, pos.Y, ServerUrl);
+          return string.Format(UrlFormat, letter, zoom, pos.X, pos.Y);
       }
 
       static readonly string UrlFormat = "http://{0}.tile.openstreetmap.org/{1}/{2}/{3}.png";
+
+      public static string ServerUrl { get; set; }
    }
 }
